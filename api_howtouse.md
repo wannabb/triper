@@ -4,7 +4,7 @@
 
 TRIPER은 화면(UI)과 데이터 처리 로직을 분리하기 위해 `lib/api/` 폴더에서 API 기능을 모듈별로 관리합니다.
 
-디렉터리 구조는 다음과 같습니다.
+디렉터리 구조는 다음과 같습니다. 참고로 모델 파일은 lib/models에 expense.dart와 trip.dart로 존재합니다.
 
 ```text
 lib/
