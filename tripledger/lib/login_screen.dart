@@ -446,19 +446,11 @@ class _GoogleMark extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const SizedBox(
+    return Image.asset(
+      'assets/images/google_logo.png',
       width: 22,
       height: 22,
-      child: Center(
-        child: Text(
-          'G',
-          style: TextStyle(
-            fontSize: 19,
-            fontWeight: FontWeight.w800,
-            color: Color(0xFF4285F4),
-          ),
-        ),
-      ),
+      fit: BoxFit.contain,
     );
   }
 }
@@ -468,22 +460,11 @@ class _KakaoMark extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return Image.asset(
+      'assets/images/kakao_logo.png',
       width: 22,
       height: 22,
-      decoration: const BoxDecoration(
-        color: Color(0xFF3C2525),
-        shape: BoxShape.circle,
-      ),
-      alignment: Alignment.center,
-      child: const Text(
-        'T',
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 12,
-          fontWeight: FontWeight.w800,
-        ),
-      ),
+      fit: BoxFit.contain,
     );
   }
 }
@@ -511,7 +492,7 @@ class _NaverMark extends StatelessWidget {
       ),
     );
   }
-}
+} //네이버만 직접그리네 뭐야 이거
 
 class _PasswordResetDialog extends StatefulWidget {
   const _PasswordResetDialog();
@@ -521,6 +502,10 @@ class _PasswordResetDialog extends StatefulWidget {
 }
 
 class _PasswordResetDialogState extends State<_PasswordResetDialog> {
+  static const Color _primary = Color(0xFF2F6FED);
+  static const Color _textSecondary = Color(0xFF737D8E);
+  static const Color _border = Color(0xFFE0E4EA);
+
   final _controller = TextEditingController();
 
   @override
@@ -531,28 +516,124 @@ class _PasswordResetDialogState extends State<_PasswordResetDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      title: const Text('비밀번호 재설정'),
-      content: TextField(
-        controller: _controller,
-        keyboardType: TextInputType.emailAddress,
-        decoration: const InputDecoration(
-          labelText: '이메일',
-          hintText: '가입한 이메일을 입력해주세요',
+    return Dialog(
+      backgroundColor: Colors.white,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      insetPadding: const EdgeInsets.symmetric(horizontal: 28),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(22, 25, 22, 20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const Text(
+              '비밀번호 재설정',
+              style: TextStyle(
+                fontSize: 21,
+                fontWeight: FontWeight.w800,
+                color: Color(0xFF17191D),
+              ),
+            ),
+            const SizedBox(height: 10),
+            const Text(
+              '가입한 이메일 주소를 입력하면\n비밀번호 재설정 링크를 보내드려요.',
+              style: TextStyle(
+                fontSize: 13,
+                height: 1.5,
+                color: _textSecondary,
+              ),
+            ),
+            const SizedBox(height: 23),
+
+            const Text(
+              '이메일',
+              style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+            ),
+            const SizedBox(height: 9),
+
+            TextField(
+              controller: _controller,
+              keyboardType: TextInputType.emailAddress,
+              autofocus: true,
+              decoration: InputDecoration(
+                hintText: '이메일을 입력해주세요',
+                hintStyle: const TextStyle(
+                  color: Color(0xFFA5ADBA),
+                  fontSize: 14,
+                ),
+                prefixIcon: const Icon(
+                  Icons.mail_outline,
+                  color: _textSecondary,
+                  size: 22,
+                ),
+                filled: true,
+                fillColor: const Color(0xFFF6F7F9),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 16,
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(13),
+                  borderSide: const BorderSide(color: _border),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(13),
+                  borderSide: const BorderSide(color: _primary, width: 1.4),
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 25),
+
+            Row(
+              children: [
+                Expanded(
+                  child: SizedBox(
+                    height: 47,
+                    child: OutlinedButton(
+                      onPressed: () => Navigator.pop(context),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: _textSecondary,
+                        side: const BorderSide(color: _border),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: const Text('취소'),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  flex: 2,
+                  child: SizedBox(
+                    height: 47,
+                    child: FilledButton(
+                      onPressed: () {
+                        Navigator.pop(context, _controller.text.trim());
+                      },
+                      style: FilledButton.styleFrom(
+                        backgroundColor: _primary,
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: const Text(
+                        '재설정 메일 보내기',
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: const Text('취소'),
-        ),
-        FilledButton(
-          onPressed: () {
-            Navigator.pop(context, _controller.text.trim());
-          },
-          child: const Text('메일 보내기'),
-        ),
-      ],
     );
   }
 }

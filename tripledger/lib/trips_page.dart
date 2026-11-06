@@ -430,11 +430,23 @@ class _TripsPageState extends State<TripsPage> {
             ),
           ),
           const Spacer(),
+
           PopupMenuButton<String>(
+            tooltip: '계정 메뉴',
             icon: const Icon(
               Icons.more_horiz_rounded,
-              color: Color(0xFF343B48),
+              color: Color(0xFF30343B),
             ),
+            color: Colors.white,
+            surfaceTintColor: Colors.white,
+            elevation: 10,
+            shadowColor: Colors.black.withValues(alpha: 0.12),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            menuPadding: const EdgeInsets.symmetric(vertical: 6),
+            constraints: const BoxConstraints(minWidth: 155, maxWidth: 155),
+            offset: const Offset(0, 8),
             onSelected: (value) {
               if (value == 'my_info') {
                 _openMyInfo();
@@ -442,24 +454,48 @@ class _TripsPageState extends State<TripsPage> {
                 _logout();
               }
             },
-            itemBuilder: (_) => const [
+            itemBuilder: (_) => [
               PopupMenuItem(
                 value: 'my_info',
+                height: 44,
                 child: Row(
                   children: [
-                    Icon(Icons.person_outline_rounded, size: 19),
-                    SizedBox(width: 10),
-                    Text('내 정보'),
+                    const Icon(
+                      Icons.person_outline_rounded,
+                      size: 19,
+                      color: Color(0xFF3478F6),
+                    ),
+                    const SizedBox(width: 11),
+                    const Text(
+                      '내 정보',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: Color(0xFF30343B),
+                      ),
+                    ),
                   ],
                 ),
               ),
               PopupMenuItem(
                 value: 'logout',
+                height: 44,
                 child: Row(
                   children: [
-                    Icon(Icons.logout_rounded, size: 19),
-                    SizedBox(width: 10),
-                    Text('로그아웃'),
+                    const Icon(
+                      Icons.logout_rounded,
+                      size: 19,
+                      color: Color(0xFFE05252),
+                    ),
+                    const SizedBox(width: 11),
+                    const Text(
+                      '로그아웃',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: Color(0xFFE05252),
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -576,6 +612,19 @@ class _TripsPageState extends State<TripsPage> {
                             Icons.more_vert_rounded,
                             color: mutedColor,
                           ),
+                          color: Colors.white,
+                          surfaceTintColor: Colors.white,
+                          elevation: 10,
+                          shadowColor: Colors.black.withValues(alpha: 0.12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          menuPadding: const EdgeInsets.symmetric(vertical: 6),
+                          constraints: const BoxConstraints(
+                            minWidth: 155,
+                            maxWidth: 155,
+                          ),
+                          offset: const Offset(0, 8),
                           onSelected: (value) {
                             if (value == 'edit') {
                               _editTrip(trip);
@@ -583,30 +632,47 @@ class _TripsPageState extends State<TripsPage> {
                               _deleteTripFromMenu(trip);
                             }
                           },
-                          itemBuilder: (_) => const [
+                          itemBuilder: (_) => [
                             PopupMenuItem(
                               value: 'edit',
+                              height: 44,
                               child: Row(
                                 children: [
-                                  Icon(Icons.edit_outlined, size: 19),
-                                  SizedBox(width: 10),
-                                  Text('수정하기'),
+                                  const Icon(
+                                    Icons.edit_outlined,
+                                    size: 19,
+                                    color: Color(0xFF3478F6),
+                                  ),
+                                  const SizedBox(width: 11),
+                                  const Text(
+                                    '수정하기',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
+                                      color: Color(0xFF30343B),
+                                    ),
+                                  ),
                                 ],
                               ),
                             ),
                             PopupMenuItem(
                               value: 'delete',
+                              height: 44,
                               child: Row(
                                 children: [
-                                  Icon(
+                                  const Icon(
                                     Icons.delete_outline_rounded,
                                     size: 19,
-                                    color: Colors.red,
+                                    color: Color(0xFFE05252),
                                   ),
-                                  SizedBox(width: 10),
-                                  Text(
+                                  const SizedBox(width: 11),
+                                  const Text(
                                     '삭제하기',
-                                    style: TextStyle(color: Colors.red),
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
+                                      color: Color(0xFFE05252),
+                                    ),
                                   ),
                                 ],
                               ),
@@ -686,18 +752,31 @@ class _AddTripSheetState extends State<AddTripSheet> {
   }
 
   Future<void> _selectDate() async {
-    final result = await showDateRangePicker(
+    final result = await _showTripDateRangePicker(
       context: context,
-      firstDate: DateTime(2020),
-      lastDate: DateTime(2100),
-      initialDateRange: _range,
-      helpText: '여행 기간 선택',
-      saveText: '선택 완료',
+      initialRange: _range,
     );
 
     if (result == null || !mounted) return;
 
     setState(() => _range = result);
+  }
+
+  Future<void> _selectCurrency() async {
+    final result = await showModalBottomSheet<String>(
+      context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => _CurrencyPickerSheet(
+        currencies: currencies,
+        selectedCurrency: _currency,
+      ),
+    );
+
+    if (result == null || !mounted) return;
+
+    setState(() => _currency = result);
   }
 
   Future<void> _submit() async {
@@ -757,7 +836,7 @@ class _AddTripSheetState extends State<AddTripSheet> {
             mainAxisSize: MainAxisSize.min,
             children: [
               const Text(
-                '새 여행 만들기 ✈️',
+                '새 여행 만들기',
                 style: TextStyle(fontSize: 22, fontWeight: FontWeight.w800),
               ),
               const SizedBox(height: 8),
@@ -799,18 +878,45 @@ class _AddTripSheetState extends State<AddTripSheet> {
               ),
               const SizedBox(height: 14),
               const _FieldLabel('현지 통화'),
-              DropdownButtonFormField<String>(
-                initialValue: _currency,
-                decoration: _inputDecoration(),
-                items: [
-                  for (final currency in currencies)
-                    DropdownMenuItem(value: currency, child: Text(currency)),
-                ],
-                onChanged: (value) {
-                  if (value != null) {
-                    setState(() => _currency = value);
-                  }
-                },
+              InkWell(
+                onTap: _selectCurrency,
+                borderRadius: BorderRadius.circular(14),
+                child: Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 15,
+                    vertical: 16,
+                  ),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFF7F9FC),
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(color: const Color(0xFFE5E9F0)),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.currency_exchange_rounded,
+                        color: Color(0xFF3478EF),
+                        size: 20,
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          _currency,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w700,
+                            color: Color(0xFF20242D),
+                          ),
+                        ),
+                      ),
+                      const Icon(
+                        Icons.keyboard_arrow_down_rounded,
+                        color: Color(0xFF8791A3),
+                      ),
+                    ],
+                  ),
+                ),
               ),
               const SizedBox(height: 20),
               const _FieldLabel('여행 기간'),
@@ -903,6 +1009,325 @@ class _AddTripSheetState extends State<AddTripSheet> {
   }
 }
 
+class _CurrencyPickerSheet extends StatefulWidget {
+  const _CurrencyPickerSheet({
+    required this.currencies,
+    required this.selectedCurrency,
+  });
+
+  final List<String> currencies;
+  final String selectedCurrency;
+
+  @override
+  State<_CurrencyPickerSheet> createState() => _CurrencyPickerSheetState();
+}
+
+class _CurrencyPickerSheetState extends State<_CurrencyPickerSheet> {
+  static const Color primary = Color(0xFF3478EF);
+  static const Color textColor = Color(0xFF20242D);
+  static const Color mutedColor = Color(0xFF8791A3);
+
+  final TextEditingController _searchController = TextEditingController();
+
+  String _query = '';
+
+  static const Map<String, String> _currencyNames = {
+    'JPY': '일본 엔',
+    'USD': '미국 달러',
+    'EUR': '유로',
+    'GBP': '영국 파운드',
+    'CNY': '중국 위안',
+    'KRW': '대한민국 원',
+    'TWD': '대만 달러',
+    'HKD': '홍콩 달러',
+    'SGD': '싱가포르 달러',
+    'THB': '태국 바트',
+    'VND': '베트남 동',
+    'PHP': '필리핀 페소',
+    'MYR': '말레이시아 링깃',
+    'IDR': '인도네시아 루피아',
+    'AUD': '호주 달러',
+    'NZD': '뉴질랜드 달러',
+    'CAD': '캐나다 달러',
+    'CHF': '스위스 프랑',
+    'INR': '인도 루피',
+    'AED': '아랍에미리트 디르함',
+    'TRY': '튀르키예 리라',
+    'RUB': '러시아 루블',
+    'SEK': '스웨덴 크로나',
+    'NOK': '노르웨이 크로네',
+    'DKK': '덴마크 크로네',
+    'PLN': '폴란드 즈워티',
+    'CZK': '체코 코루나',
+    'HUF': '헝가리 포린트',
+    'BRL': '브라질 헤알',
+    'MXN': '멕시코 페소',
+    'ZAR': '남아프리카 랜드',
+  };
+
+  static const Map<String, String> _currencyFlags = {
+    'JPY': '🇯🇵',
+    'USD': '🇺🇸',
+    'EUR': '🇪🇺',
+    'GBP': '🇬🇧',
+    'CNY': '🇨🇳',
+    'KRW': '🇰🇷',
+    'TWD': '🇹🇼',
+    'HKD': '🇭🇰',
+    'SGD': '🇸🇬',
+    'THB': '🇹🇭',
+    'VND': '🇻🇳',
+    'PHP': '🇵🇭',
+    'MYR': '🇲🇾',
+    'IDR': '🇮🇩',
+    'AUD': '🇦🇺',
+    'NZD': '🇳🇿',
+    'CAD': '🇨🇦',
+    'CHF': '🇨🇭',
+    'INR': '🇮🇳',
+    'AED': '🇦🇪',
+    'TRY': '🇹🇷',
+    'RUB': '🇷🇺',
+    'SEK': '🇸🇪',
+    'NOK': '🇳🇴',
+    'DKK': '🇩🇰',
+    'PLN': '🇵🇱',
+    'CZK': '🇨🇿',
+    'HUF': '🇭🇺',
+    'BRL': '🇧🇷',
+    'MXN': '🇲🇽',
+    'ZAR': '🇿🇦',
+  };
+
+  List<String> get _filteredCurrencies {
+    final query = _query.trim().toUpperCase();
+
+    if (query.isEmpty) {
+      return widget.currencies;
+    }
+
+    return widget.currencies.where((currency) {
+      final code = currency.toUpperCase();
+      final name = _currencyNames[code] ?? '';
+
+      return code.contains(query) || name.toUpperCase().contains(query);
+    }).toList();
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  Widget _buildCurrencyItem(String currency) {
+    final isSelected = currency == widget.selectedCurrency;
+    final code = currency.toUpperCase();
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 7),
+      child: Material(
+        color: isSelected ? const Color(0xFFEEF3FF) : Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(14),
+          onTap: () => Navigator.pop(context, currency),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(
+                color: isSelected
+                    ? const Color(0xFFD5E3FF)
+                    : const Color(0xFFF0F2F6),
+              ),
+            ),
+            child: Row(
+              children: [
+                SizedBox(
+                  width: 38,
+                  child: Text(
+                    _currencyFlags[code] ?? '🌐',
+                    style: const TextStyle(fontSize: 23),
+                  ),
+                ),
+                const SizedBox(width: 9),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        code,
+                        style: TextStyle(
+                          color: isSelected ? primary : textColor,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                      const SizedBox(height: 3),
+                      Text(
+                        _currencyNames[code] ?? '통화',
+                        style: const TextStyle(color: mutedColor, fontSize: 11),
+                      ),
+                    ],
+                  ),
+                ),
+                if (isSelected)
+                  const Icon(
+                    Icons.check_circle_rounded,
+                    color: primary,
+                    size: 21,
+                  )
+                else
+                  const Icon(
+                    Icons.circle_outlined,
+                    color: Color(0xFFD8DDE6),
+                    size: 20,
+                  ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final filtered = _filteredCurrencies;
+
+    return Container(
+      height: MediaQuery.sizeOf(context).height * 0.78,
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(26)),
+      ),
+      child: Column(
+        children: [
+          const SizedBox(height: 12),
+          Container(
+            width: 38,
+            height: 4,
+            decoration: BoxDecoration(
+              color: const Color(0xFFE1E5EB),
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(22, 25, 22, 15),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'TRIPER · CURRENCY',
+                  style: TextStyle(
+                    color: primary,
+                    fontSize: 10,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 1.1,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                const Text(
+                  '현지 통화를 선택해 주세요',
+                  style: TextStyle(
+                    color: textColor,
+                    fontSize: 20,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: -0.5,
+                  ),
+                ),
+                const SizedBox(height: 7),
+                const Text(
+                  '여행할 국가에서 사용하는 통화를 선택하세요.',
+                  style: TextStyle(color: mutedColor, fontSize: 12),
+                ),
+                const SizedBox(height: 19),
+                TextField(
+                  controller: _searchController,
+                  onChanged: (value) {
+                    setState(() => _query = value);
+                  },
+                  decoration: InputDecoration(
+                    hintText: '통화 코드 검색 (예: JPY, USD)',
+                    hintStyle: const TextStyle(
+                      color: Color(0xFFA0A8B6),
+                      fontSize: 12,
+                    ),
+                    prefixIcon: const Icon(
+                      Icons.search_rounded,
+                      color: primary,
+                      size: 21,
+                    ),
+                    suffixIcon: _query.isNotEmpty
+                        ? IconButton(
+                            onPressed: () {
+                              _searchController.clear();
+                              setState(() => _query = '');
+                            },
+                            icon: const Icon(Icons.close_rounded, size: 18),
+                          )
+                        : null,
+                    filled: true,
+                    fillColor: const Color(0xFFF7F9FC),
+                    contentPadding: const EdgeInsets.symmetric(vertical: 14),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(14),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            child: filtered.isEmpty
+                ? const Center(
+                    child: Text(
+                      '검색 결과가 없습니다.',
+                      style: TextStyle(color: mutedColor, fontSize: 13),
+                    ),
+                  )
+                : ListView.builder(
+                    padding: const EdgeInsets.fromLTRB(22, 0, 22, 20),
+                    itemCount: filtered.length,
+                    itemBuilder: (context, index) {
+                      return _buildCurrencyItem(filtered[index]);
+                    },
+                  ),
+          ),
+          Padding(
+            padding: EdgeInsets.fromLTRB(
+              22,
+              8,
+              22,
+              MediaQuery.paddingOf(context).bottom + 14,
+            ),
+            child: SizedBox(
+              width: double.infinity,
+              height: 48,
+              child: OutlinedButton(
+                onPressed: () => Navigator.pop(context),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: mutedColor,
+                  side: const BorderSide(color: Color(0xFFE5E9F0)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                ),
+                child: const Text(
+                  '닫기',
+                  style: TextStyle(fontWeight: FontWeight.w700),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 // ==================================================
 // 여행 정보 수정 바텀시트
 // ==================================================
@@ -944,13 +1369,9 @@ class _EditTripSheetState extends State<EditTripSheet> {
   }
 
   Future<void> _selectDate() async {
-    final result = await showDateRangePicker(
+    final result = await _showTripDateRangePicker(
       context: context,
-      firstDate: DateTime(2020),
-      lastDate: DateTime(2100),
-      initialDateRange: _range,
-      helpText: '여행 기간 수정',
-      saveText: '선택 완료',
+      initialRange: _range,
     );
 
     if (result == null || !mounted) return;
@@ -1155,6 +1576,412 @@ class _EditTripSheetState extends State<EditTripSheet> {
                             fontSize: 15,
                           ),
                         ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+Future<DateTimeRange?> _showTripDateRangePicker({
+  required BuildContext context,
+  required DateTimeRange initialRange,
+}) {
+  return showModalBottomSheet<DateTimeRange>(
+    context: context,
+    isScrollControlled: true,
+    useSafeArea: true,
+    backgroundColor: Colors.transparent,
+    builder: (_) => _TripDateRangePicker(initialRange: initialRange),
+  );
+}
+
+class _TripDateRangePicker extends StatefulWidget {
+  const _TripDateRangePicker({required this.initialRange});
+
+  final DateTimeRange initialRange;
+
+  @override
+  State<_TripDateRangePicker> createState() => _TripDateRangePickerState();
+}
+
+class _TripDateRangePickerState extends State<_TripDateRangePicker> {
+  static const Color primary = Color(0xFF3478EF);
+  static const Color textColor = Color(0xFF20242D);
+  static const Color mutedColor = Color(0xFF929BAA);
+  static const Color rangeColor = Color(0xFFEAF1FF);
+
+  late DateTime _visibleMonth;
+  DateTime? _start;
+  DateTime? _end;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _start = _dateOnly(widget.initialRange.start);
+    _end = _dateOnly(widget.initialRange.end);
+
+    _visibleMonth = DateTime(_start!.year, _start!.month);
+  }
+
+  DateTime _dateOnly(DateTime date) {
+    return DateTime(date.year, date.month, date.day);
+  }
+
+  bool _sameDay(DateTime? a, DateTime b) {
+    return a != null &&
+        a.year == b.year &&
+        a.month == b.month &&
+        a.day == b.day;
+  }
+
+  String _formatDate(DateTime? date) {
+    if (date == null) return '선택해 주세요';
+
+    return '${date.year}.${date.month.toString().padLeft(2, '0')}.'
+        '${date.day.toString().padLeft(2, '0')}';
+  }
+
+  void _changeMonth(int amount) {
+    final next = DateTime(_visibleMonth.year, _visibleMonth.month + amount);
+
+    if (next.isBefore(DateTime(2020, 1)) || next.isAfter(DateTime(2100, 12))) {
+      return;
+    }
+
+    setState(() => _visibleMonth = next);
+  }
+
+  void _selectDay(DateTime date) {
+    final selected = _dateOnly(date);
+
+    setState(() {
+      // 첫 날짜를 선택하거나 이미 기간이 완성된 경우 새로 시작
+      if (_start == null || _end != null) {
+        _start = selected;
+        _end = null;
+      }
+      // 종료일이 시작일보다 빠르면 시작일을 다시 설정
+      else if (selected.isBefore(_start!)) {
+        _start = selected;
+        _end = null;
+      }
+      // 종료일 선택
+      else {
+        _end = selected;
+      }
+    });
+  }
+
+  Widget _buildCalendar() {
+    final firstDay = DateTime(_visibleMonth.year, _visibleMonth.month, 1);
+
+    final offset = firstDay.weekday % 7;
+
+    final dates = List.generate(
+      42,
+      (index) =>
+          DateTime(_visibleMonth.year, _visibleMonth.month, index - offset + 1),
+    );
+
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: dates.length,
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 7,
+        mainAxisSpacing: 4,
+        childAspectRatio: 1,
+      ),
+      itemBuilder: (context, index) {
+        final date = dates[index];
+
+        final isCurrentMonth = date.month == _visibleMonth.month;
+
+        final isValid =
+            isCurrentMonth &&
+            !date.isBefore(DateTime(2020, 1, 1)) &&
+            !date.isAfter(DateTime(2100, 12, 31));
+
+        final isStart = _sameDay(_start, date);
+        final isEnd = _sameDay(_end, date);
+
+        final isBetween =
+            _start != null &&
+            _end != null &&
+            date.isAfter(_start!) &&
+            date.isBefore(_end!);
+
+        final isSelected = isStart || isEnd;
+
+        final isToday = _sameDay(DateTime.now(), date);
+
+        return GestureDetector(
+          onTap: isValid ? () => _selectDay(date) : null,
+          child: Container(
+            decoration: BoxDecoration(
+              color: isBetween ? rangeColor : Colors.transparent,
+              borderRadius: BorderRadius.horizontal(
+                left: Radius.circular(isStart ? 24 : 0),
+                right: Radius.circular(isEnd ? 24 : 0),
+              ),
+            ),
+            child: Center(
+              child: Container(
+                width: 38,
+                height: 38,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: isSelected ? primary : Colors.transparent,
+                  shape: BoxShape.circle,
+                ),
+                child: Text(
+                  '${date.day}',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: isSelected || isToday
+                        ? FontWeight.w800
+                        : FontWeight.w500,
+                    color: isSelected
+                        ? Colors.white
+                        : !isValid
+                        ? const Color(0xFFD4D9E1)
+                        : isToday
+                        ? primary
+                        : textColor,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildSelectedDate({
+    required String label,
+    required DateTime? date,
+    required bool active,
+  }) {
+    return Expanded(
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 13),
+        decoration: BoxDecoration(
+          color: active ? const Color(0xFFEAF1FF) : const Color(0xFFF7F8FA),
+          borderRadius: BorderRadius.circular(15),
+          border: Border.all(
+            color: active ? const Color(0xFFD5E3FF) : const Color(0xFFEEF0F4),
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              label,
+              style: const TextStyle(
+                color: mutedColor,
+                fontSize: 11,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(height: 6),
+            Text(
+              _formatDate(date),
+              style: TextStyle(
+                color: active ? primary : textColor,
+                fontSize: 13,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final canGoPrevious = _visibleMonth.isAfter(DateTime(2020, 1));
+
+    final canGoNext = _visibleMonth.isBefore(DateTime(2100, 12));
+
+    return Container(
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.sizeOf(context).height * 0.88,
+      ),
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+      ),
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(
+            22,
+            12,
+            22,
+            MediaQuery.paddingOf(context).bottom + 20,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Container(
+                  width: 38,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFE1E5EB),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 27),
+
+              const Text(
+                'TRIPER · TRAVEL DATE',
+                style: TextStyle(
+                  color: primary,
+                  fontSize: 10,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: 1.1,
+                ),
+              ),
+              const SizedBox(height: 9),
+
+              const Text(
+                '여행 기간을 선택해 주세요',
+                style: TextStyle(
+                  color: textColor,
+                  fontSize: 21,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: -0.6,
+                ),
+              ),
+              const SizedBox(height: 7),
+
+              const Text(
+                '시작일과 종료일을 차례대로 선택하세요.',
+                style: TextStyle(color: mutedColor, fontSize: 12),
+              ),
+              const SizedBox(height: 26),
+
+              Row(
+                children: [
+                  IconButton(
+                    onPressed: canGoPrevious ? () => _changeMonth(-1) : null,
+                    icon: const Icon(Icons.chevron_left_rounded, size: 27),
+                    color: textColor,
+                  ),
+                  Expanded(
+                    child: Text(
+                      '${_visibleMonth.year}년 ${_visibleMonth.month}월',
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontSize: 17,
+                        fontWeight: FontWeight.w800,
+                        color: textColor,
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: canGoNext ? () => _changeMonth(1) : null,
+                    icon: const Icon(Icons.chevron_right_rounded, size: 27),
+                    color: textColor,
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 8),
+
+              Row(
+                children: [
+                  for (final day in ['일', '월', '화', '수', '목', '금', '토'])
+                    Expanded(
+                      child: Center(
+                        child: Text(
+                          day,
+                          style: const TextStyle(
+                            color: mutedColor,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+
+              const SizedBox(height: 10),
+
+              _buildCalendar(),
+
+              const SizedBox(height: 20),
+
+              Row(
+                children: [
+                  _buildSelectedDate(
+                    label: '시작일',
+                    date: _start,
+                    active: _start != null,
+                  ),
+                  const SizedBox(width: 10),
+                  _buildSelectedDate(
+                    label: '종료일',
+                    date: _end,
+                    active: _end != null,
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 22),
+
+              SizedBox(
+                width: double.infinity,
+                height: 55,
+                child: FilledButton(
+                  onPressed: _start != null && _end != null
+                      ? () {
+                          Navigator.pop(
+                            context,
+                            DateTimeRange(start: _start!, end: _end!),
+                          );
+                        }
+                      : null,
+                  style: FilledButton.styleFrom(
+                    backgroundColor: primary,
+                    disabledBackgroundColor: const Color(0xFFDCE5F5),
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(17),
+                    ),
+                    elevation: 0,
+                  ),
+                  child: const Text(
+                    '선택 완료',
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800),
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 8),
+
+              SizedBox(
+                width: double.infinity,
+                height: 42,
+                child: TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text(
+                    '취소',
+                    style: TextStyle(
+                      color: mutedColor,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                 ),
               ),
             ],
