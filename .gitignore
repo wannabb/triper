@@ -67,3 +67,24 @@ node_modules/
 
 # dataconnect generated files
 .dataconnect
+
+# Node.js
+node_modules/
+functions/node_modules/
+
+# Flutter
+tripledger/.dart_tool/
+tripledger/build/
+
+# IDE
+.idea/
+.vscode/
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Secrets
+*service-account*.json
+*credentials*.json
